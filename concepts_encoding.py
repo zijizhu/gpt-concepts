@@ -38,8 +38,8 @@ if __name__ == '__main__':
     for i in tqdm(range(0, len(all_concepts_list), args.batch_size)):
         batch = all_concepts_list[i:i+args.batch_size]
         batch_emb = clip_model.encode_text(clip.tokenize(batch).to(args.device))
-        concept_emb_list.append(batch_emb)
-    concept_emb = torch.cat(concept_emb_list).cpu()
+        concept_emb_list.append(batch_emb.cpu())
+    concept_emb = torch.cat(concept_emb_list)
 
     # Save to file
     torch.save(concept_emb, os.path.join(args.output_dir, f'concept_emb_{args.backbone}.pth'))
