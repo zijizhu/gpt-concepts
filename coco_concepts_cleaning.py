@@ -8,14 +8,14 @@ from nltk.metrics import edit_distance
 
 def parse_response_to_concepts(message):
     '''Clean LLM response and extract concept entities.'''
-    phrases_to_remove = ['some']
-    drop_responses_with_words = ['sorry', 'does not', "doesn't", 'there is no']
-    drop_concepts_with_word = ['size', 'length']
+    phrases_to_remove = ['some', 'appears to be', 'appears to have']
+    drop_responses_with_str = ['sorry', 'does not', "doesn't", 'there is no']
+    drop_concepts_with_str = ['size', 'length', '"']
     drop_concepts = ['small', 'large', 'medium']
 
     message = message.lower()
     # Drop responses such as "I'm sorry, ..."
-    if any(word in message for word in drop_responses_with_words):
+    if any(word in message for word in drop_responses_with_str):
         return []
     brackets = r'\(.*?\)' # Remove round brackets
     message = re.sub(brackets, '', message)
@@ -26,7 +26,9 @@ def parse_response_to_concepts(message):
     concepts = []
     for s in splitted:
         s = s.strip(' ._+!@#$?')
-        if any(word in s for word in drop_concepts_with_word):
+        if not s.isascii():
+            continue
+        if any(word in s for word in drop_concepts_with_str):
             continue
         if s in drop_concepts:
             continue
