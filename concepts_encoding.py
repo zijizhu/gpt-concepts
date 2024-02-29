@@ -32,7 +32,7 @@ if __name__ == '__main__':
         concept2cats.append(cat_ids)
 
     # Encode concepts using clip
-    clip_model, _ = clip.load(args.backbone)
+    clip_model, _ = clip.load(args.backbone, device=args.device)
 
     concept_emb_list = []
     for i in tqdm(range(0, len(all_concepts_list), args.batch_size)):
