@@ -44,5 +44,5 @@ if __name__ == '__main__':
 
     # Save to file
     torch.save(concept_emb, os.path.join(args.output_dir, f'concept_emb_{args.backbone}.pth'))
-    with open(os.path.join(args.output_dir, f'unique_concept2cat.pth'), 'r') as fp:
-        json.dump({'concepts': all_concepts_list, 'cat_ids': concept2cats})
+    torch.save({'concepts': all_concepts_list, 'cat_ids': concept2cats},
+               os.path.join(args.output_dir, f'idx2concept_and_cats.pth'))
