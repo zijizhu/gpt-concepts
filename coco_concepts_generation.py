@@ -28,22 +28,22 @@ def create_gpt4vision_prompt(cat_name, img_url):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--input_dir', type=str, default='data/coco/cat2img_samples.json')
-    parser.add_argument('--output_dir', type=str, default='data/coco/cat2gpt_responses.pkl')
-    parser.add_argument('--coco_train_dir', type=str, default='data/coco/annotations/instances_train2017.json')
+    parser.add_argument('--input_path', type=str, default='data/coco/cat2img_samples.json')
+    parser.add_argument('--output_path', type=str, default='data/coco/cat2gpt_responses.pkl')
+    parser.add_argument('--coco_train_path', type=str, default='data/coco/annotations/instances_train2017.json')
 
     args = parser.parse_args()
     print(args)
 
-    coco_train = COCO(args.coco_train_dir)
-    with open(args.input_dir, 'r') as fp:
+    coco_train = COCO(args.coco_train_path)
+    with open(args.input_path, 'r') as fp:
         cat2img_ids = json.load(fp=fp)
 
     client = OpenAI()
 
     # Resume from saved data
-    if os.path.exists(args.output_dir):
-        with open(args.output_dir, 'rb') as fp:
+    if os.path.exists(args.output_path):
+        with open(args.output_path, 'rb') as fp:
             cat2gpt_responses = pkl.load(file=fp)
     else:
         cat2gpt_responses = {int(cat_id): [] for cat_id in cat2img_ids}
@@ -76,5 +76,5 @@ if __name__ == '__main__':
             cat2gpt_responses[cat_id].append(response)
 
         # Save the gpt responses after generation is compeleted for each category
-        with open(args.output_dir, 'wb') as fp:
+        with open(args.output_path, 'wb') as fp:
             pkl.dump(cat2gpt_responses, file=fp)
