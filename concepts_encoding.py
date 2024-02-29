@@ -11,7 +11,7 @@ from tqdm import tqdm
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--batch_size', type=int, default=32)
-    parser.add_argument('--device', type=str, default='cuda')
+    parser.add_argument('--device', type=str, default='cuda:0')
     parser.add_argument('--backbone', type=str, default='RN50')
     parser.add_argument('--input_path', type=str, default='data/coco/cat2concepts.json')
     parser.add_argument('--output_dir', type=str, default='data/coco')
@@ -37,9 +37,9 @@ if __name__ == '__main__':
     concept_emb_list = []
     for i in tqdm(range(0, len(all_concepts_list), args.batch_size)):
         batch = all_concepts_list[i:i+args.batch_size]
-        batch_emb = clip_model.encode_text(clip.tokenize(batch))
+        batch_emb = clip_model.encode_text(clip.tokenize(batch).to(args.device))
         concept_emb_list.append(batch_emb)
-    concept_emb = torch.cat(concept_emb_list)
+    concept_emb = torch.cat(concept_emb_list).cpu()
 
     # Save to file
     torch.save(concept_emb, os.path.join(args.output_dir, f'concept_emb_{args.backbone}.pth'))
